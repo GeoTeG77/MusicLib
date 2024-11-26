@@ -1,0 +1,184 @@
+basePath: /api/v1
+definitions:
+  models.FullSong:
+    description: FullSong represents a song in some endpoints
+    properties:
+      group:
+        description: The name of the group
+        type: string
+      link:
+        description: The link to song
+        type: string
+      releaseDate:
+        description: The release date of song
+        type: string
+      song:
+        description: The name of the song
+        type: string
+      text:
+        description: The text of song
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Sever for manage music lib.
+  title: Music Lib
+  version: "1.0"
+paths:
+  /song:
+    post:
+      consumes:
+      - application/json
+      description: Submit a new song's details and store it in the database
+      parameters:
+      - description: Group name
+        in: query
+        name: group
+        type: string
+      - description: Song name
+        in: query
+        name: song
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The posted song details
+          schema:
+            $ref: '#/definitions/models.FullSong'
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Request failed
+      summary: Post a new song
+      tags:
+      - song
+  /song/:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the song specified by group and song name
+      parameters:
+      - description: Group name
+        in: query
+        name: group
+        required: true
+        type: string
+      - description: Song name
+        in: query
+        name: song
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Song successfully deleted
+          schema:
+            type: string
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal error
+      summary: Delete a song
+      tags:
+      - song
+    get:
+      consumes:
+      - application/json
+      description: Retrieve the text for a specific song by its group and song name
+      parameters:
+      - description: Group name
+        in: query
+        name: group
+        type: string
+      - description: Song name
+        in: query
+        name: song
+        type: string
+      - description: Verse number (default 1)
+        in: query
+        name: verse
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Text of the song
+          schema:
+            type: string
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal error
+      summary: Get song text
+      tags:
+      - song
+    patch:
+      consumes:
+      - application/json
+      description: Update the details of a song, identified by group and song name
+      parameters:
+      - description: Group name
+        in: query
+        name: group
+        type: string
+      - description: Song name
+        in: query
+        name: song
+        type: string
+      - description: Updated song details
+        in: body
+        name: songDetails
+        required: true
+        schema:
+          $ref: '#/definitions/models.FullSong'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: The updated song details
+          schema:
+            $ref: '#/definitions/models.FullSong'
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal error
+      summary: Update an existing song
+      tags:
+      - song
+  /songs:
+    get:
+      description: Retrieve a list of songs with optional limit, page, and filter
+        parameters
+      parameters:
+      - description: Limit the number of results
+        in: query
+        name: limit
+        type: string
+      - description: Specify the page number
+        in: query
+        name: page
+        type: string
+      - description: Filter songs by field (song, group, release)
+        in: query
+        name: filter
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of songs
+          schema:
+            items:
+              $ref: '#/definitions/models.FullSong'
+            type: array
+        "400":
+          description: Invalid request parameters
+        "500":
+          description: Internal server error
+      summary: Get all songs with optional filters
+      tags:
+      - song
+swagger: "2.0"
